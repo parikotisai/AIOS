@@ -1,2 +1,0 @@
-# AIOS
-aios with learning
