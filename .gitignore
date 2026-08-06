@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node / frontend (Day 2+)
+node_modules/
+dist/
+
+# Secrets (Phase 3+ — never commit API keys)
+.env
+
+# Editor / OS noise
+.vscode/
+.DS_Store
