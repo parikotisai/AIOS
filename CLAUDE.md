@@ -66,9 +66,11 @@ production-quality engineering.
 4. I implement; you review my code and explain improvements.
 5. Run tests and the day's "done when" check.
 6. Suggest the day's milestone commit message (`day-NN: <topic>`,
-   matching the day's block in the curriculum doc) plus `git tag day-NN`
-   — one branch (main), one frozen tag per day; no per-day branches
-   (decision logged in `docs/notes/day-01.md`).
+   matching the day's block in the curriculum doc) plus an annotated tag
+   `git tag -a day-NN -m "Day NN: <topic>"` pushed via
+   `git push --follow-tags` (lightweight tags won't push with
+   --follow-tags) — one branch (main), one frozen tag per day; no
+   per-day branches (decision logged in `docs/notes/day-01.md`).
 7. Stop and wait before moving on.
 
 Never jump ahead to future lessons. Never skip prerequisites or

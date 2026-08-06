@@ -153,11 +153,24 @@ Daily ritual (I run it, after the day's "done when" passes):
 git status        # verify venv/ etc. are ignored
 git add .
 git commit -m "day-NN: <topic>"
-git tag day-NN
-git push --follow-tags   # if remote exists
+git tag -a day-NN -m "Day NN: <topic>"   # -a = annotated, required for --follow-tags
+git push --follow-tags
 ```
 Rewind: `git checkout day-NN` (whole repo as of that day);
 `git checkout main` returns to present. `git tag` lists all bookmarks.
+
+**Gotchas hit on Day 1 (two, stacked):**
+1. Plain `git push` sends *commits only — never tags*. GitHub showed
+   "0 Tags" even though `day-01` existed locally.
+2. Then `git push --follow-tags` said "Everything up-to-date" and STILL
+   pushed nothing — because git has two tag kinds: **lightweight**
+   (`git tag day-01`, bare pointer) and **annotated** (`git tag -a
+   day-01 -m "..."`, full object with author/date/message).
+   `--follow-tags` deliberately only sends *annotated* tags; lightweight
+   ones are treated as private bookmarks. Fix: `git tag -d day-01`,
+   recreate with `-a`, push again. Milestones should always be
+   annotated tags.
+   Check what GitHub actually has: `git ls-remote --tags origin`.
 
 ## Structural decision
 
