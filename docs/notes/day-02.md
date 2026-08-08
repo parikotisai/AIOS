@@ -136,6 +136,29 @@ when forgotten (react.dev) — the skill is knowing what to search;
 setter pair) and the syntax reconstructs itself. Memorized syntax
 evaporates; understood syntax regrows.
 
+**Q: What is a promise? Is this where async/await comes in?**
+A: JS is single-threaded — waiting for a network reply would freeze the
+page. So `fetch` returns **immediately** with a *promise*: an object
+representing "a value that will exist later." **Buzzer analogy:** order
+food, get a buzzer, go sit down — the buzzer is a claim on future food,
+and `.then()` = the instructions for when it lights up. Three states:
+*pending* (in flight), *fulfilled* (value ready), *rejected* (error —
+the homework's `Failed to fetch` was a rejection). Chain reads: fetch →
+when replied, unpack (`res.json()` is slow too → another promise) →
+when unpacked, store.
+**async/await = same mechanism, nicer syntax** (not a new thing):
+`await promise` pauses *that function only* (never the page) until the
+value's ready. Rules: `await` needs `async function`; async functions
+themselves return promises. useEffect quirk: can't pass an async
+function to useEffect directly (effects must return nothing/cleanup;
+async returns a promise) → standard pattern: define async `loadTrace()`
+inside, call it. Errors become normal `try/catch` around awaits.
+`.then` and async/await are fully interchangeable — read both, modern
+code mostly writes async/await. Python has the same keywords
+(`async def`/`await`) and FastAPI is built on them — coming later in
+Phase 1. **Practice rep added: rewrite App.jsx fetch as async/await,
+verify, keep whichever reads better.**
+
 **Gotcha (PowerShell + npm):** `npm create vite@latest . -- --template
 react` forwarded the args as `create-vite . react` — the `--template`
 flag got eaten (PowerShell and npm disagree over the `--` separator;
@@ -216,6 +239,39 @@ git push --follow-tags
 ```
 (Check `git status` first — frontend/node_modules must NOT appear;
 Vite also generated its own frontend/.gitignore which covers it.)
+
+## Homework results (verified with DevTools Network tab)
+
+- Page showed the text **`null`** when fetch failed — because `trace`
+  kept its `useState(null)` starting value and `JSON.stringify(null)`
+  renders as "null". The page faithfully shows "no data yet."
+- **Backend stopped → `ERR_CONNECTION_REFUSED`**: nobody listening on
+  port 8000 — connection-level failure, knock got no answer.
+- **CORS block commented → `CORS error`**: the backend *did* answer,
+  but without the allow-origin header, so **the browser itself
+  discarded the response** before React saw it. Key distinction:
+  connection refused (server dead) vs CORS error (server fine, browser
+  refused to deliver) — same URL, different failure *layer*.
+- **Gotcha while commenting:** left line 21 `app.add_middleware(`
+  uncommented → unclosed parenthesis → SyntaxError → uvicorn reloader
+  crash. Lesson: comment whole statements (Ctrl+/ on the full
+  selection), and always restore to green after break-it experiments.
+
+## Extra React practice ladder (requested — within Day 2 scope)
+
+1. **Conditional rendering:** `if (trace === null) return <p>Loading
+   trace...</p>` — components return different screens per data state.
+2. **Derived value:** `<p>Total steps: {trace.length}</p>` — never
+   state for computable facts. JSX rule: one outer element per return
+   (wrap in `<div>`).
+3. **Counter button:** second useState + first event handler:
+   `<button onClick={() => setCount(count + 1)}>`. Trap to try once:
+   `onClick={setCount(count+1)}` (no arrow) runs during render, not on
+   click — handlers get *a function to call later*.
+4. **Stretch — re-fetch button:** extract `loadTrace()`, call from both
+   `useEffect` (on appear) and `onClick` (on demand) — same action, two
+   triggers, which is exactly why effects and handlers are separate
+   tools.
 
 **Prep for tomorrow (Day 3):** Reading code as a tree — Python's `ast`
 module (`ast.parse`, `ast.dump`), the first real step toward the

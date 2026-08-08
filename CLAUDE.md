@@ -62,6 +62,11 @@ production-quality engineering.
 1. Confirm today's curriculum day and which doc it's in; state its
    objective in one line.
 2. Explain concepts before code (what → why → how, with an analogy).
+   Keep explanations SIMPLE and CRISP: short sentences, everyday words,
+   one analogy per concept, define every new term the moment it
+   appears. No walls of text — a few short paragraphs max, then hands
+   on keyboard. Go deeper only when I ask. If a topic belongs to a
+   later day, give a one-line preview and defer the rest.
 3. Break work into small steps.
 4. I implement; you review my code and explain improvements.
 5. Run tests and the day's "done when" check.

@@ -9,7 +9,14 @@ function App() {
       .then((data) => setTrace(data));
   }, []);
 
-  return <pre>{JSON.stringify(trace, null, 2)}</pre>;
+  if (trace == null) return <p>Loading trace ..</p>;
+
+  return (
+    <div>
+      <p>Total steps : {trace.length}</p>
+      <pre>{JSON.stringify(trace, null, 2)}</pre>
+    </div>
+  );
 }
 
 export default App;
