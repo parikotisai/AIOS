@@ -53,6 +53,18 @@ as text.
   miss to separate *data* (string = text in quotes) from *action*
   (calling a function = `Call`). Ran it; hunted down `func=` and
   `args=` successfully.
+- **Q: Why `show_tree("print(x, y)")` in quotes, not bare?**
+  A: Quotes make the code *data* — show_tree examines it, doesn't run
+  it. Bare, Python would execute `print(x, y)` first (and crash — no
+  such variables exist here). Analogy: quoting someone ("he said 'go
+  home'") vs actually going home — quotes mean "these are the words,
+  don't do them."
+- **Q: Where does AST help in the Code Visualizer?**
+  A: It's the engine. Pipeline: user's code (text) → `ast.parse` →
+  tree → evaluator (Day 5+) walks the tree, *doing* each node and
+  *recording* a step → trace JSON → the React page from Day 1–2.
+  Day 1's hardcoded fake trace is exactly what the evaluator will
+  generate for real — starting with `Assign` on Day 5.
 
 ## What we built / ran
 
