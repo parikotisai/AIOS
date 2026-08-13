@@ -365,6 +365,9 @@ flowchart TD
   `git commit -m "day-05: first evaluator (assignment tracing) + first test thinking"`
   then `git tag -a day-05 -m "Day 5: first evaluator + first test thinking"`
   then `git push --follow-tags`.
+- **Teaching feedback from Sai (recorded to memory):** the photo/album
+  analogy didn't land — change example styles from next session;
+  prefer real-software examples (like the login page Sai produced).
 - **Prep for tomorrow (Day 6, doc 02):** evaluator learns arithmetic
   (`+ - * /` — the `BinOp` node previewed on Day 3) and more data
   types; SDET goes hands-on with **pytest** and systematic input
