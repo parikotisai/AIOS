@@ -1,6 +1,7 @@
 # Day 6 — Arithmetic in the Evaluator (+ - * /)
 
-**Date:** 2026-08-14
+**Date:** 2026-08-18 (curriculum Day 6 — Day 5 closed 2026-08-13; curriculum days
+are units of work, not calendar days)
 **Curriculum doc:** `docs/curriculum/02-days-6-to-10.md` (Days 6–7 block)
 **SDET overlay:** `docs/curriculum/sdet-overlay-v1.md` (Days 6–7 block)
 
@@ -64,6 +65,58 @@
   Chose their own operator set (Add + Pow, 8**4=4096) — creative variation, good sign.
 - Morale evidence banked: entire evaluator typed from memory, 6 own-code bugs fixed
   solo or with hints only. "Can't write code" is measurably untrue after one rep.
+- **Round 2 (practice_tracer1.py, same evening):** typed solo, all four operators —
+  **zero bugs on review** (Round 1 had six). Pending to close the round: predict
+  step values on paper (incl. what `5/3` produces), run, add asserts, and name the
+  self-reported 30% not-yet-owned lines for tomorrow's targeted warm-up.
+- Round 2 ran green (5/3 → 1.6666666666666667 float observed). Sai named their 30%:
+  **run_statement**. Retaught via one-line-flow table (`z = x + y` through every line).
+  Key clarifications: `targets` is a LIST because Python allows `a = b = 5` (take
+  `[0]`, then `.id` = name as text) · `node.value` is still the un-computed structure —
+  run_statement coordinates, eval_expr computes (division of labor) · `len(trace)+1` =
+  the list numbering itself. Verification pending: 3 concrete questions on `x = 5` +
+  asserts to close Round 2.
+- run_statement check: Q1 ✓ ("x") · Q3 ✓ (0+1=1, reasoned correctly) · Q2 located a
+  real confusion: Sai thought "four cases" meant the four OPERATORS. Retaught as a
+  two-level tree: outer four cases = Name/Constant/BinOp/else-raise; the operator
+  check is a SUB-decision nested inside the BinOp case only. Re-check pending on
+  `y = 3` and `z = x + y` (two-level question).
+- **Q (Sai):** "What about the left-side x — case 1 right?" **A:** No — the left side
+  NEVER visits eval_expr. Right side = a value to compute (`eval_expr(node.value)`);
+  left side = a destination label (`targets[0].id`, plain text used as dict key).
+  Proof from own code: at line 1 `variables` is empty — if left-x used case 1 it would
+  KeyError, but the program runs. Case 1 = a name being READ (right side). Python tags
+  these Load vs Store in the tree (optional explorer peek). Check upgraded: for
+  `z = x + y`, how many eval_expr calls total, and does z ever visit? (expect: 3 calls
+  — BinOp, x, y; z never).
+- z-is-a-label ✓ landed. Call-counting missed ("once") → retaught as an indented call
+  log (3 calls: run_statement's + two self-calls for left/right), then made EMPIRICAL:
+  Sai instruments eval_expr with a trace print (`print("eval_expr called with:", node)`),
+  predicts 14 total calls for the 6-line program (1+1+3+3+3+3), runs, counts, removes
+  the probe. New concept: **instrumentation** — add a probe, observe, remove.
+- Print experiment: Sai counted **14** — matches prediction; recursion now seen, not
+  just believed (plain lines = 1 call, math lines = 3).
+- **Round 2 CLOSED (verified):** green trace + silent asserts (z==8, z==1.666...,
+  changed check). Round 1: 6 bugs → Round 2: 0 bugs.
+- **Morale flag at day close:** "feeling like I am missing something, little lost,
+  don't know why." Offered 4-way self-diagnosis: (a) no big-picture map · (b) can't
+  tell how much was me vs hints · (c) vocabulary piling up faster than it settles ·
+  (d) doesn't feel like real coding. **Sai chose (b):** "felt like I understood but
+  while typing am getting lost." Reframed as recognition vs recall (two skills, not
+  one broken one); evidence: 6 bugs → 0 bugs in one day. Techniques given: say the
+  step aloud before typing · recall steps not characters · write the step as an
+  English comment when stuck. **Day 7 MUST open with Round 3: blank page, zero hints,
+  Claude silent — the unaided win.**
+- **Feedback for Day 7+:** Sai wants practical web-app-flavored examples. Agreed:
+  realistic test data (price/qty/total, users list) within each day's scope, plus
+  regular re-anchoring that the evaluator IS the web app's engine (wired to /trace
+  Days 17–18; toy snippets = user inputs, not the app).
+- **Sai found a real gap** while asking about `a = b = 5` ("what about b? targets[1]?"):
+  yes, `targets[1]` is `b` — and our evaluator silently assigns only `a`, dropping `b`
+  with no error. Same silent-failure class as the bare-else bug. Logged as a Day 7
+  test case: input `a = b = 5` · class: negative (unsupported feature) · expected:
+  loud raise · actual today: silent partial trace. Fix planned: multi-target guard in
+  `run_statement` + pytest negative test.
 
 ## What we built / ran
 
@@ -169,6 +222,16 @@
 - **Commit:** `day-06: evaluator arithmetic (+ - * /) with regression asserts`
   then `git tag -a day-06 -m "Day 6: evaluator arithmetic"` and
   `git push --follow-tags`.
-- **Tomorrow (Day 7):** pytest for real (`test_tracer.py`, `pytest.raises` for `x/0`
-  and `x ** y` — Sai's parked instinct) + strings, lists, dicts, indexing + `print`
-  in the trace → completes the Days 6–7 done-when.
+- **Tomorrow (Day 7) — order agreed with Sai at Day 6 close:**
+  1. **Full recap of Days 1–6 first**, pin by pin, in WEB APP terms only (browser →
+     server → request → response → code text → tree → trace), examples in
+     price/cart/users flavor — no x/y/z. Sai asked for this explicitly to "get back."
+  2. **Round 3: blank page, all reference files closed, Claude silent.** Honest
+     measurement — Sai admitted Rounds 1–2 leaned on peeking at earlier examples.
+     Bugs are fine; it's a measurement, not a judgment.
+  3. Then the Day 7 build: pytest for real (`test_tracer.py`, `pytest.raises` for
+     division-by-zero and unsupported operators — Sai's parked instinct), the
+     `a = b = 5` multi-target guard + negative test (Sai's own find), strings, lists,
+     dicts, indexing, `print` in the trace → completes the Days 6–7 done-when.
+  - Language rule reinforced by Sai: **plain terms completely** — no invented
+    mnemonics, no jargon like "instrument/probe" without a plain-word intro.
